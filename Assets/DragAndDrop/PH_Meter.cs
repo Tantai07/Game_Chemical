@@ -1,17 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class DragAndDrop : MonoBehaviour
+public class PH_Meter : MonoBehaviour
 {
-    [Header("Name")]
-    public string Name;
-
-    [Header("State of object")]
-    public Sprite normal_state;
-    public Sprite water_state;
-
     [Header("Setting")]
     public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
     public float detectionRadius = 0.5f; // รัศมีสำหรับตรวจสอบการชน
+
+    [Header("Script")]
+    [Space(10)]
+    public Data_UI data;
 
     private Vector3 originalPosition;
     private Vector3 offset;
@@ -49,17 +48,15 @@ public class DragAndDrop : MonoBehaviour
     {
         // ใช้ OverlapCircle หรือวิธีการตรวจจับการชนจาก Collider2D ที่มี Trigger
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius);
+        transform.position = originalPosition;
 
         foreach (Collider2D hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag(targetTag.ToString())) // เช็คแท็ก
+            DragAndDrop dragComponent = hitCollider.GetComponent<DragAndDrop>();
+            if(dragComponent != null)
             {
-                gameObject.SetActive(false);
-            }
-            else
-            {
-                // หากไม่ตรงกัน กลับไปตำแหน่งเดิม
-                transform.position = originalPosition;
+                string dragName = dragComponent.Name;
+                data.Check_Data(dragName);
             }
         }
     }
