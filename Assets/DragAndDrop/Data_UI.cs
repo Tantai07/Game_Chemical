@@ -5,46 +5,43 @@ using UnityEngine;
 
 public class Data_UI : MonoBehaviour
 {
+    [Header("Menu")]
+    public GameObject Doc_Menu;
+
+    [Space(15)]
     [Header("Text")]
     [Space(10)]
     public TextMeshProUGUI[] textArray = new TextMeshProUGUI[3];
 
-    [Header("Info")]
-    [Space(15)]
-    public List<Info_Information> infoList = new List<Info_Information>();
-
-    public void Check_Data(string Name)
+    public void Check_Data(string Name,int PH)
     {
         var matchedText = FindInTextArray(Name);
         if (matchedText != null)
         {
-           var matchedInfo = FindInInfoList(Name);
-           if (matchedInfo != null)
-           {
-                matchedText.text = matchedInfo.Description;
-           }
+           matchedText.text = PH.ToString();
         }
+    }
+    public void OpenMenu()
+    {
+        Doc_Menu.SetActive(true);
+    }
+    public void CloseMenu()
+    {
+        Doc_Menu.SetActive(false);
     }
     private TextMeshProUGUI FindInTextArray(string Name)
     {
         foreach (var textElement in textArray)
         {
-            if (textElement != null && textElement.text == Name)
+            if (textElement != null)
             {
-                return textElement; //ส่งกลับ text
+                Text_Name text = textElement.GetComponent<Text_Name>();
+                if (text.text_Name == Name)
+                {
+                    return textElement; //ส่งกลับ text
+                }
             }
         }
         return null; //ในกรณีไม่เจอ
-    }
-    private Info_Information FindInInfoList(string Name)
-    {
-        foreach (var info in infoList)
-        {
-            if (info.Name == Name)
-            {
-                return info;//ส่งกลับ info
-            }
-        }
-        return null;//ในกรณีไม่เจอ
     }
 }

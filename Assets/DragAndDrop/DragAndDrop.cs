@@ -2,8 +2,11 @@
 
 public class DragAndDrop : MonoBehaviour
 {
-    [Header("Name")]
+    [Header("Status")]
     public string Name;
+    public int PH;
+    public int Mass;
+    public States State;
 
     [Header("State of object")]
     public Sprite normal_state;
@@ -17,16 +20,26 @@ public class DragAndDrop : MonoBehaviour
     private Vector3 offset;
     private Collider2D gameObjectCol;
 
+    public enum States
+    {
+        Solid,
+        Liquid,
+        Gas
+    }
+
     public enum TargetTag
     {
-        Player,
+        Sink,
         Enemy,
         Collectible,
-        Obstacle
+        Obstacle,
+        Trash
     }
 
     private void Start()
     {
+        //SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        //spriteRenderer.sprite = normal_state;
         // บันทึกตำแหน่งเริ่มต้น
         originalPosition = transform.position;
         gameObjectCol = GetComponent<Collider2D>();
@@ -54,7 +67,19 @@ public class DragAndDrop : MonoBehaviour
         {
             if (hitCollider.CompareTag(targetTag.ToString())) // เช็คแท็ก
             {
-                gameObject.SetActive(false);
+                if(gameObject.tag == "Normal")
+                {
+                    gameObject.tag = "Water";
+
+                }
+                else if(gameObject.tag == "Water")
+                {
+                    gameObject.tag = "Finished";
+                }
+                else
+                {
+                    gameObject.SetActive(false);
+                }
             }
             else
             {

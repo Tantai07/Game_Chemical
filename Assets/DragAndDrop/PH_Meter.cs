@@ -56,7 +56,8 @@ public class PH_Meter : MonoBehaviour
             if(dragComponent != null)
             {
                 string dragName = dragComponent.Name;
-                data.Check_Data(dragName);
+                int ph = dragComponent.PH;
+                data.Check_Data(dragName,ph);
             }
         }
     }
