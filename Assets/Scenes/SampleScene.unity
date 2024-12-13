@@ -2780,13 +2780,13 @@ MonoBehaviour:
   Name: 
   PH: 0
   Mass: 0
-  State: 0
+  State: 2
   normal_state: {fileID: 2747690628134850419, guid: b670ab75dde984907b8570040daa08c5, type: 3}
   water_state: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  tool_state: {fileID: 0}
-  mixed_state: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  tool_state: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  mixed_state: {fileID: 3625043607559282579, guid: 19fb86013d8c24d6cb8410c0aadf30fa, type: 3}
   targetTag: 0
-  detectionRadius: 0.5
+  detectionRadius: 0.7
 --- !u!1 &1954416813
 GameObject:
   m_ObjectHideFlags: 0

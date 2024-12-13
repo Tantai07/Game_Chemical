@@ -84,8 +84,7 @@ public class DragAndDrop : MonoBehaviour
                     if (gameObject.tag == "Normal" && targetTag == TargetTag.Water_Bucket)
                     {
                         DragAndDrop hit = hitCollider.GetComponent<DragAndDrop>();
-                        hit.enabled = true;
-                        hit.spriteRenderer.sprite = mixed_state;
+                        hit.spriteRenderer.sprite = hit.mixed_state;
                         hit.tag = "Mixed_Bucket";
                         hit.targetTag = TargetTag.Trash_water;
                     }
@@ -101,7 +100,6 @@ public class DragAndDrop : MonoBehaviour
                     {
                         spriteRenderer.sprite = water_state;
                         gameObject.tag = "Water_Bucket";
-                        this.enabled = false;
                     }
                     else if(gameObject.tag == "Mixed_Bucket" && targetTag == TargetTag.Trash_water)
                     {
