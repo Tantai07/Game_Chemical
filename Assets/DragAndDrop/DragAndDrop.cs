@@ -6,11 +6,13 @@ public class DragAndDrop : MonoBehaviour
     public string Name;
     public int PH;
     public int Mass;
+    public int Volume;
     public States State;
 
     [Header("State of object")]
     public Sprite normal_state;
     public Sprite water_state;
+    public Sprite tool_state;
 
     [Header("Setting")]
     public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
@@ -24,7 +26,7 @@ public class DragAndDrop : MonoBehaviour
     {
         Solid,
         Liquid,
-        Gas
+        Tool
     }
 
     public enum TargetTag
@@ -67,18 +69,29 @@ public class DragAndDrop : MonoBehaviour
         {
             if (hitCollider.CompareTag(targetTag.ToString())) // เช็คแท็ก
             {
-                if(gameObject.tag == "Normal")
+                if (State == States.Liquid)
                 {
-                    gameObject.tag = "Water";
+                    if (gameObject.tag == "Normal")
+                    {
+                        gameObject.tag = "Water";
 
+                    }
+                    else if (gameObject.tag == "Water")
+                    {
+                        gameObject.tag = "Finished";
+                    }
+                    else
+                    {
+                        gameObject.SetActive(false);
+                    }
                 }
-                else if(gameObject.tag == "Water")
+                else if (State == States.Solid)
                 {
-                    gameObject.tag = "Finished";
+
                 }
                 else
                 {
-                    gameObject.SetActive(false);
+
                 }
             }
             else
