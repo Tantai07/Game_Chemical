@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Burst.CompilerServices;
+using UnityEngine;
 
 public class DragAndDrop : MonoBehaviour
 {
@@ -6,13 +7,13 @@ public class DragAndDrop : MonoBehaviour
     public string Name;
     public int PH;
     public int Mass;
-    public int Volume;
     public States State;
 
     [Header("State of object")]
     public Sprite normal_state;
     public Sprite water_state;
     public Sprite tool_state;
+    public Sprite mixed_state;
 
     [Header("Setting")]
     public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
@@ -21,27 +22,36 @@ public class DragAndDrop : MonoBehaviour
     private Vector3 originalPosition;
     private Vector3 offset;
     private Collider2D gameObjectCol;
+    SpriteRenderer spriteRenderer;
 
     public enum States
     {
         Solid,
         Liquid,
+        Bucket,
         Tool
     }
 
     public enum TargetTag
     {
         Sink,
-        Enemy,
-        Collectible,
-        Obstacle,
-        Trash
+        Water_Bucket,
+        Trash_water,
+        Trash_normal,
+        Trash_Danger,
+        Close_Box,
+        Dry_Box
     }
 
     private void Start()
     {
-        //SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        //spriteRenderer.sprite = normal_state;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = normal_state;
+
+        if(PH == 7)
+        {
+            SetTargetTag(TargetTag.Trash_water);
+        }
         // บันทึกตำแหน่งเริ่มต้น
         originalPosition = transform.position;
         gameObjectCol = GetComponent<Collider2D>();
@@ -71,18 +81,33 @@ public class DragAndDrop : MonoBehaviour
             {
                 if (State == States.Liquid)
                 {
-                    if (gameObject.tag == "Normal")
+                    if (gameObject.tag == "Normal" && targetTag == TargetTag.Water_Bucket)
                     {
-                        gameObject.tag = "Water";
+                        DragAndDrop hit = hitCollider.GetComponent<DragAndDrop>();
+                        hit.enabled = true;
+                        hit.spriteRenderer.sprite = mixed_state;
+                        hit.tag = "Mixed_Bucket";
+                        hit.targetTag = TargetTag.Trash_water;
+                    }
 
-                    }
-                    else if (gameObject.tag == "Water")
+                    spriteRenderer.sprite = tool_state;
+                    State = States.Tool;
+                    SetTargetTag(TargetTag.Dry_Box);
+
+                }
+                else if (State == States.Bucket)
+                {
+                    if (gameObject.tag == "Bucket" && targetTag == TargetTag.Sink)
                     {
-                        gameObject.tag = "Finished";
+                        spriteRenderer.sprite = water_state;
+                        gameObject.tag = "Water_Bucket";
+                        this.enabled = false;
                     }
-                    else
+                    else if(gameObject.tag == "Mixed_Bucket" && targetTag == TargetTag.Trash_water)
                     {
-                        gameObject.SetActive(false);
+                        spriteRenderer.sprite = normal_state;
+                        gameObject.tag = "Bucket";
+                        targetTag = TargetTag.Sink;
                     }
                 }
                 else if (State == States.Solid)
@@ -91,7 +116,7 @@ public class DragAndDrop : MonoBehaviour
                 }
                 else
                 {
-
+                    gameObject.SetActive(false);
                 }
             }
             else

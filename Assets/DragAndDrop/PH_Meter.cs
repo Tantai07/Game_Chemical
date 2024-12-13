@@ -53,7 +53,7 @@ public class PH_Meter : MonoBehaviour
         foreach (Collider2D hitCollider in hitColliders)
         {
             DragAndDrop dragComponent = hitCollider.GetComponent<DragAndDrop>();
-            if(dragComponent != null)
+            if(dragComponent != null && dragComponent.Name != null)
             {
                 string dragName = dragComponent.Name;
                 int ph = dragComponent.PH;

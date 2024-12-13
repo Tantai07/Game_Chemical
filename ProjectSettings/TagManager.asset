@@ -6,8 +6,15 @@ TagManager:
   tags:
   - Normal
   - Water
-  - Finished
   - Sink
+  - Water_Bucket
+  - Bucket
+  - Trash_water
+  - Trash_normal
+  - Trash_Danger
+  - Close_Box
+  - Dry_Box
+  - Mixed_Bucket
   layers:
   - Default
   - TransparentFX
