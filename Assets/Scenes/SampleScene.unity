@@ -408,6 +408,59 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &248053862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 248053864}
+  - component: {fileID: 248053863}
+  m_Layer: 0
+  m_Name: Chemical_Control
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &248053863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248053862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1959fb94d7563341a74ac48d7e7739f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Danger_list:
+  - Na
+  - C2H6O
+  - H2SO4
+  - NaOH
+  - Cl
+  - C3H8
+  Max_score: 0
+  Current_score: 0
+--- !u!4 &248053864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248053862}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.51, y: -1.36, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &309139999
 GameObject:
   m_ObjectHideFlags: 0
@@ -1281,14 +1334,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: CO2
   PH: 2
-  Mass: 3
-  State: 1
+  Mass_grams: 0
+  State: 4
   normal_state: {fileID: -2413806693520163455, guid: 8a1d28ea4e569b443a19bdb3cff637ff, type: 3}
   water_state: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   not_clean_tool_state: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   cleaned_tool_state: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  packed_state: {fileID: 0}
+  danger_state: {fileID: 0}
   targetTag: 1
   detectionRadius: 0.7
+  Over_Weight: 0
+  Normal_Solid: 0
+  Danger: 0
+  Tool_Danger: 0
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3040,14 +3099,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: 
   PH: 0
-  Mass: 0
+  Mass_grams: 0
   State: 2
   normal_state: {fileID: 2747690628134850419, guid: b670ab75dde984907b8570040daa08c5, type: 3}
   water_state: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   not_clean_tool_state: {fileID: 0}
   cleaned_tool_state: {fileID: 0}
+  packed_state: {fileID: 0}
+  danger_state: {fileID: 0}
   targetTag: 0
   detectionRadius: 0.7
+  Over_Weight: 0
+  Normal_Solid: 0
+  Danger: 0
+  Tool_Danger: 0
 --- !u!114 &1851286634
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,9 @@ TagManager:
   - Close_Box
   - Dry_Box
   - Mixed_Bucket
+  - Pack_Box
+  - Packed
+  - Over_Weight
   layers:
   - Default
   - TransparentFX
