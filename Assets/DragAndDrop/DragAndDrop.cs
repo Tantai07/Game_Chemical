@@ -12,8 +12,8 @@ public class DragAndDrop : MonoBehaviour
     [Header("State of object")]
     public Sprite normal_state;
     public Sprite water_state;
-    public Sprite tool_state;
-    public Sprite mixed_state;
+    public Sprite not_clean_tool_state;
+    public Sprite cleaned_tool_state;
 
     [Header("Setting")]
     public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
@@ -47,10 +47,13 @@ public class DragAndDrop : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = normal_state;
-
-        if(PH == 7)
+        if(State == States.Tool)
         {
-            SetTargetTag(TargetTag.Trash_water);
+            spriteRenderer.sprite = not_clean_tool_state;
+        }
+        else if(State == States.Liquid && PH == 7)
+        {
+            targetTag = TargetTag.Trash_water;
         }
         // บันทึกตำแหน่งเริ่มต้น
         originalPosition = transform.position;
@@ -84,14 +87,15 @@ public class DragAndDrop : MonoBehaviour
                     if (gameObject.tag == "Normal" && targetTag == TargetTag.Water_Bucket)
                     {
                         DragAndDrop hit = hitCollider.GetComponent<DragAndDrop>();
-                        hit.spriteRenderer.sprite = hit.mixed_state;
+                        Check_Mixed check = hitCollider.GetComponent<Check_Mixed>();
                         hit.tag = "Mixed_Bucket";
                         hit.targetTag = TargetTag.Trash_water;
+                        hit.spriteRenderer.sprite = check.CheckMixed(Name);
                     }
 
-                    spriteRenderer.sprite = tool_state;
+                    spriteRenderer.sprite = not_clean_tool_state;
                     State = States.Tool;
-                    SetTargetTag(TargetTag.Dry_Box);
+                    targetTag = TargetTag.Sink;
 
                 }
                 else if (State == States.Bucket)
@@ -112,9 +116,17 @@ public class DragAndDrop : MonoBehaviour
                 {
 
                 }
-                else
+                else if (State == States.Tool)
                 {
-                    gameObject.SetActive(false);
+                    if (gameObject.tag == "Normal" && targetTag == TargetTag.Sink)
+                    {
+                        spriteRenderer.sprite = cleaned_tool_state;
+                        targetTag = TargetTag.Dry_Box;
+                    }
+                    else
+                    {
+                        gameObject.SetActive(false);
+                    }
                 }
             }
             else
@@ -124,11 +136,6 @@ public class DragAndDrop : MonoBehaviour
             }
         }
     }
-    public void SetTargetTag(TargetTag newTargetTag)
-    {
-        targetTag = newTargetTag;
-    }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
