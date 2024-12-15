@@ -146,7 +146,7 @@ public class Stamp_UI : MonoBehaviour
             }
             else
             {
-                Component.targetTag = DragAndDrop.TargetTag.Close_Box;
+                Component.targetTag = DragAndDrop.TargetTag.Trash_Over_Weight;
                 stamp =  Instantiate(OverWeight_Stamp_gameobject, Component.gameObject.transform);
             }
 

@@ -92,7 +92,6 @@ public class DragAndDrop : MonoBehaviour
                         State = States.Danger;
                         targetTag = TargetTag.Pack_Box;
                         Liquid = true;
-                        Danger = true;
                         break;
                     }
                 }
@@ -125,6 +124,7 @@ public class DragAndDrop : MonoBehaviour
                 {
                     if (Name == name)
                     {
+                        gameObject.tag = "Normal";
                         State = States.Danger;
                         Solid = true;
                         break;
@@ -195,6 +195,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = packed_state;
                             gameObject.tag = "Packed";
+                            targetTag = TargetTag.Close_Box;
                         }
                         else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid) 
                         {
