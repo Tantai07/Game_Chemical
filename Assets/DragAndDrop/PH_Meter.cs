@@ -5,7 +5,6 @@ using UnityEngine;
 public class PH_Meter : MonoBehaviour
 {
     [Header("Setting")]
-    public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
     public float detectionRadius = 0.5f; // รัศมีสำหรับตรวจสอบการชน
 
     [Header("Script")]
@@ -15,14 +14,6 @@ public class PH_Meter : MonoBehaviour
     private Vector3 originalPosition;
     private Vector3 offset;
     private Collider2D gameObjectCol;
-
-    public enum TargetTag
-    {
-        Player,
-        Enemy,
-        Collectible,
-        Obstacle
-    }
 
     private void Start()
     {
@@ -60,10 +51,6 @@ public class PH_Meter : MonoBehaviour
                 data.Check_Data(dragName,ph);
             }
         }
-    }
-    public void SetTargetTag(TargetTag newTargetTag)
-    {
-        targetTag = newTargetTag;
     }
 
     private void OnDrawGizmosSelected()

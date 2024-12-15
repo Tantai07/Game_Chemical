@@ -10,7 +10,6 @@ TagManager:
   - Water_Bucket
   - Bucket
   - Trash_water
-  - Trash_normal
   - Trash_Danger
   - Close_Box
   - Dry_Box
@@ -18,6 +17,7 @@ TagManager:
   - Pack_Box
   - Packed
   - Over_Weight
+  - Trash_Over_Weight
   layers:
   - Default
   - TransparentFX

@@ -25,8 +25,14 @@ public class DragAndDrop : MonoBehaviour
 
     [Header("Stamp")]
     public bool Over_Weight;
-    public bool Normal_Solid;
     public bool Danger;
+
+    [Space(10)]
+    public bool Normal_Solid;
+
+    [Header("Past State")]
+    public bool Solid;
+    public bool Liquid;
 
     [Space(10)]
     public bool Tool_Danger;
@@ -49,8 +55,8 @@ public class DragAndDrop : MonoBehaviour
     {
         Sink,
         Water_Bucket,
+        Trash_Over_Weight,
         Trash_water,
-        Trash_normal,
         Trash_Danger,
         Close_Box,
         Dry_Box,
@@ -77,6 +83,18 @@ public class DragAndDrop : MonoBehaviour
                 else if (PH > 7 || PH < 7)
                 {
                     targetTag = TargetTag.Water_Bucket;
+                }
+
+                foreach (var name in Check_Danger.instance.Danger_list)
+                {
+                    if (Name == name)
+                    {
+                        State = States.Danger;
+                        targetTag = TargetTag.Pack_Box;
+                        Liquid = true;
+                        Danger = true;
+                        break;
+                    }
                 }
                 break;
 
@@ -108,7 +126,7 @@ public class DragAndDrop : MonoBehaviour
                     if (Name == name)
                     {
                         State = States.Danger;
-                        Danger = true;
+                        Solid = true;
                         break;
                     }
                 }
@@ -178,18 +196,18 @@ public class DragAndDrop : MonoBehaviour
                             spriteRenderer.sprite = packed_state;
                             gameObject.tag = "Packed";
                         }
-                        /* else if (gameObject.tag == "Packed" && targetTag == TargetTag.SomeTarget && Normal_Solid) 
+                        else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid) 
                         {
                             gameObject.SetActive(false);
-                        } */
+                        }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Pack_Box)
                         {
                             spriteRenderer.sprite = packed_state;
                         }
-                        /* else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.SomeTarget && Over_Weight) 
+                        else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight) 
                         {
                             gameObject.SetActive(false);
-                        } */
+                        }
                         break;
 
                     case States.Danger:
