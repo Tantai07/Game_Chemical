@@ -48,7 +48,8 @@ public class DragAndDrop : MonoBehaviour
         Liquid,
         Bucket,
         Danger,
-        Tool
+        Tool,
+        Save
     }
 
     public enum TargetTag
@@ -60,7 +61,8 @@ public class DragAndDrop : MonoBehaviour
         Trash_Danger,
         Close_Box,
         Dry_Box,
-        Pack_Box
+        Pack_Box,
+        Save_Box
     }
 
     private void Start()
@@ -73,6 +75,11 @@ public class DragAndDrop : MonoBehaviour
             case States.Tool:
                 spriteRenderer.sprite = not_clean_tool_state;
                 targetTag = TargetTag.Sink;
+                break;
+
+            case States.Save:
+                spriteRenderer.sprite = normal_state;
+                targetTag = TargetTag.Save_Box;
                 break;
 
             case States.Liquid:
@@ -153,13 +160,18 @@ public class DragAndDrop : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        // ใช้ OverlapCircle หรือวิธีการตรวจจับการชนจาก Collider2D ที่มี Trigger
+        // ใช้ OverlapCircle เพื่อหาตัวที่อยู่ในรัศมี
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius);
+
+        bool found = false;  // ตัวแปรนี้ใช้เช็คว่าเจอ object แล้วหรือยัง
 
         foreach (Collider2D hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag(targetTag.ToString())) // เช็คแท็ก
+            // เช็คว่า collider ที่เจอไม่ใช่ตัวมันเองและตรงตามแท็กที่ต้องการ
+            if (!found && hitCollider.gameObject != gameObject && hitCollider.CompareTag(targetTag.ToString()))
             {
+                found = true;  // เมื่อเจอแล้วให้บันทึกว่าเจอแล้ว
+
                 switch (State)
                 {
                     case States.Liquid:
@@ -197,16 +209,18 @@ public class DragAndDrop : MonoBehaviour
                             gameObject.tag = "Packed";
                             targetTag = TargetTag.Close_Box;
                         }
-                        else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid) 
+                        else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid)
                         {
+                            Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Pack_Box)
                         {
                             spriteRenderer.sprite = packed_state;
                         }
-                        else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight) 
+                        else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight)
                         {
+                            Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         break;
@@ -214,6 +228,7 @@ public class DragAndDrop : MonoBehaviour
                     case States.Danger:
                         if (targetTag == TargetTag.Trash_Danger && (Tool_Danger || Danger))
                         {
+                            Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         else if (targetTag == TargetTag.Pack_Box)
@@ -231,6 +246,15 @@ public class DragAndDrop : MonoBehaviour
                         }
                         else
                         {
+                            Check_Danger.instance.Add_Score(1);
+                            gameObject.SetActive(false);
+                        }
+                        break;
+
+                    case States.Save:
+                        if (gameObject.tag == "Normal" && targetTag == TargetTag.Save_Box)
+                        {
+                            Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         break;
@@ -239,12 +263,16 @@ public class DragAndDrop : MonoBehaviour
                         Debug.LogWarning("ไม่พบข้อมูล");
                         break;
                 }
+
+                break;  // ออกจากลูปทันทีเมื่อเจอ object ตัวแรกที่ตรงเงื่อนไข
             }
-            else
-            {
-                // หากไม่ตรงกัน กลับไปตำแหน่งเดิม
-                transform.position = originalPosition;
-            }
+        }
+
+        if (!found)
+        {
+            Check_Danger.instance.ReduceTime(10);
+            // หากไม่เจอ object ใดในวงนี้ กลับไปตำแหน่งเดิม
+            transform.position = originalPosition;
         }
     }
 

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Data_UI : MonoBehaviour
 {
     [Header("Menu")]
     public GameObject Doc_Menu;
 
-    [Space(15)]
     [Header("Text")]
     [Space(10)]
     public TextMeshProUGUI[] textArray = new TextMeshProUGUI[3];
@@ -18,16 +18,18 @@ public class Data_UI : MonoBehaviour
         var matchedText = FindInTextArray(Name);
         if (matchedText != null)
         {
-           matchedText.text = PH.ToString();
+            matchedText.text = $"PH : {PH.ToString()}";
         }
     }
     public void OpenMenu()
     {
         Doc_Menu.SetActive(true);
+        Time.timeScale = 0f;
     }
     public void CloseMenu()
     {
         Doc_Menu.SetActive(false);
+        Time.timeScale = 1f;
     }
     private TextMeshProUGUI FindInTextArray(string Name)
     {

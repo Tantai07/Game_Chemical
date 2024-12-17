@@ -18,6 +18,7 @@ TagManager:
   - Packed
   - Over_Weight
   - Trash_Over_Weight
+  - Save_Box
   layers:
   - Default
   - TransparentFX
@@ -25,8 +26,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Bucket
+  - Chemical
   - 
   - 
   - 
