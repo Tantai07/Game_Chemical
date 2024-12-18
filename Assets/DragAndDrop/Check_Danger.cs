@@ -44,13 +44,11 @@ public class Check_Danger : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
         anim = elapsedTimeText.GetComponent<Animator>();
-        StartTimer();
     }
 
     void Update()
@@ -90,8 +88,16 @@ public class Check_Danger : MonoBehaviour
             isRunning = false;
 
             timerText.text = "00:00";
+
+            GameOver();
         }
     }
+
+    private void GameOver()
+    {
+        Start_Black();
+    }
+
     public void ReduceTime(float amount)
     {
         anim.Play("RiseText");
@@ -119,13 +125,13 @@ public class Check_Danger : MonoBehaviour
         }
     }
 
-    private void Finish_Black()
+    public void Finish_Black()
     {
         anim1.Play("Block_1_Back");
         anim2.Play("Block_2_Back");
     }
 
-    private void Start_Black()
+    public void Start_Black()
     {
         anim1.Play("Block_1_Start");
         anim2.Play("Block_2_Start");

@@ -21,7 +21,7 @@ public class DragAndDrop : MonoBehaviour
 
     [Header("Setting")]
     public TargetTag targetTag; // แท็กเป้าหมายที่ต้องการตรวจสอบ
-    public float detectionRadius = 0.5f; // รัศมีสำหรับตรวจสอบการชน
+    public Vector2 detectionSize;
 
     [Header("Stamp")]
     public bool Over_Weight;
@@ -160,8 +160,7 @@ public class DragAndDrop : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        // ใช้ OverlapCircle เพื่อหาตัวที่อยู่ในรัศมี
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(transform.position, detectionSize, 0f);
 
         bool found = false;  // ตัวแปรนี้ใช้เช็คว่าเจอ object แล้วหรือยัง
 
@@ -186,6 +185,7 @@ public class DragAndDrop : MonoBehaviour
                         spriteRenderer.sprite = not_clean_tool_state;
                         State = States.Tool;
                         targetTag = TargetTag.Sink;
+                        transform.position = originalPosition;
                         break;
 
                     case States.Bucket:
@@ -193,12 +193,14 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = water_state;
                             gameObject.tag = "Water_Bucket";
+                            transform.position = originalPosition;
                         }
                         else if (gameObject.tag == "Mixed_Bucket" && targetTag == TargetTag.Trash_water)
                         {
                             spriteRenderer.sprite = normal_state;
                             gameObject.tag = "Bucket";
                             targetTag = TargetTag.Sink;
+                            transform.position = originalPosition;
                         }
                         break;
 
@@ -208,6 +210,7 @@ public class DragAndDrop : MonoBehaviour
                             spriteRenderer.sprite = packed_state;
                             gameObject.tag = "Packed";
                             targetTag = TargetTag.Close_Box;
+                            transform.position = originalPosition;
                         }
                         else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid)
                         {
@@ -217,6 +220,7 @@ public class DragAndDrop : MonoBehaviour
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Pack_Box)
                         {
                             spriteRenderer.sprite = packed_state;
+                            transform.position = originalPosition;
                         }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight)
                         {
@@ -235,6 +239,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = danger_state;
                             targetTag = TargetTag.Trash_Danger;
+                            transform.position = originalPosition;
                         }
                         break;
 
@@ -243,6 +248,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = cleaned_tool_state;
                             targetTag = TargetTag.Dry_Box;
+                            transform.position = originalPosition;
                         }
                         else
                         {
@@ -279,6 +285,6 @@ public class DragAndDrop : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.DrawWireCube(transform.position, detectionSize);
     }
 }
