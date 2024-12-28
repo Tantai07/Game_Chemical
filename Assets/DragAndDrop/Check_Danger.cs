@@ -31,6 +31,14 @@ public class Check_Danger : MonoBehaviour
     [Header("Timer Status")]
     public bool isRunning = false;
 
+    [Header("Text Score")]
+    public TextMeshProUGUI score_text;
+
+    [Header("Game Over UI")]
+    public TextMeshProUGUI text_gameOver;
+    public Image image_in_button;
+    public GameObject gameover_Button;
+
     public static Check_Danger instance;
 
     private Animator anim;
@@ -49,6 +57,12 @@ public class Check_Danger : MonoBehaviour
     void Start()
     {
         anim = elapsedTimeText.GetComponent<Animator>();
+        UpdateScore();
+    }
+
+    private void UpdateScore()
+    {
+        score_text.text = $"{Current_score.ToString()} / { Max_score.ToString()}";
     }
 
     void Update()
@@ -95,7 +109,17 @@ public class Check_Danger : MonoBehaviour
 
     private void GameOver()
     {
+        Animator anim_over = text_gameOver.GetComponent<Animator>();
+        anim_over.Play("GameOver");
         Start_Black();
+        gameover_Button.SetActive(true);
+    }
+    public void ShowButton()
+    {
+        Animator anim_button = gameover_Button.GetComponent<Animator>();
+        Animator anim_image = image_in_button.GetComponent<Animator>();
+        anim_button.Play("Return_Show_Up");
+        anim_image.Play("Return_Show_Up");
     }
 
     public void ReduceTime(float amount)
@@ -118,6 +142,7 @@ public class Check_Danger : MonoBehaviour
     public void Add_Score(int score)
     {
         Current_score += score;
+        UpdateScore();
         if (Current_score >= Max_score)
         {
             Current_score = 0;

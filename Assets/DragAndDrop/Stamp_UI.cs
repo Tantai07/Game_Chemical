@@ -55,7 +55,6 @@ public class Stamp_UI : MonoBehaviour
         { "C2H6O", 1 },
         { "C3H8", 1 },
         { "H2SO4", 4 },
-        { "NaOH", 4 },
         { "Cl", 6 }
     };
     public void Dropdown(int index)

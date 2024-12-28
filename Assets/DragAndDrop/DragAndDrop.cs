@@ -44,9 +44,11 @@ public class DragAndDrop : MonoBehaviour
 
     public enum States
     {
+        None,
         Solid,
         Liquid,
-        Bucket,
+        Acid,
+        Base,
         Danger,
         Tool,
         Save
@@ -54,10 +56,10 @@ public class DragAndDrop : MonoBehaviour
 
     public enum TargetTag
     {
+        None,
         Sink,
-        Water_Bucket,
+        Normal,
         Trash_Over_Weight,
-        Trash_water,
         Trash_Danger,
         Close_Box,
         Dry_Box,
@@ -83,19 +85,21 @@ public class DragAndDrop : MonoBehaviour
                 break;
 
             case States.Liquid:
-                if (PH == 7)
+                if (PH == 7 || PH == 8)
                 {
-                    targetTag = TargetTag.Trash_water;
+                    targetTag = TargetTag.Sink;
                 }
-                else if (PH > 7 || PH < 7)
+                else if (PH > 8 || PH < 7)
                 {
-                    targetTag = TargetTag.Water_Bucket;
+                    targetTag = TargetTag.None;
+                    gameObject.tag = "Not ready";
                 }
 
                 foreach (var name in Check_Danger.instance.Danger_list)
                 {
                     if (Name == name)
                     {
+                        gameObject.tag = "Normal";
                         State = States.Danger;
                         targetTag = TargetTag.Pack_Box;
                         Liquid = true;
@@ -109,9 +113,11 @@ public class DragAndDrop : MonoBehaviour
                 Tool_Danger = true;
                 break;
 
-            case States.Bucket:
-                targetTag = TargetTag.Sink;
+            case States.Acid:
+            case States.Base:
+                targetTag = TargetTag.Normal;
                 break;
+
 
             case States.Solid:
                 targetTag = TargetTag.Pack_Box;
@@ -166,6 +172,7 @@ public class DragAndDrop : MonoBehaviour
 
         foreach (Collider2D hitCollider in hitColliders)
         {
+            DragAndDrop hit = hitCollider.GetComponent<DragAndDrop>();
             // เช็คว่า collider ที่เจอไม่ใช่ตัวมันเองและตรงตามแท็กที่ต้องการ
             if (!found && hitCollider.gameObject != gameObject && hitCollider.CompareTag(targetTag.ToString()))
             {
@@ -174,33 +181,45 @@ public class DragAndDrop : MonoBehaviour
                 switch (State)
                 {
                     case States.Liquid:
-                        if (gameObject.tag == "Normal" && targetTag == TargetTag.Water_Bucket)
+                        if (gameObject.tag == "Normal" && targetTag == TargetTag.Sink)
                         {
-                            DragAndDrop hit = hitCollider.GetComponent<DragAndDrop>();
-                            Check_Mixed check = hitCollider.GetComponent<Check_Mixed>();
-                            hit.tag = "Mixed_Bucket";
-                            hit.targetTag = TargetTag.Trash_water;
-                            hit.spriteRenderer.sprite = check.CheckMixed(Name);
+                            spriteRenderer.sprite = not_clean_tool_state;
+                            targetTag = TargetTag.Sink;
+                            State = States.Tool;
                         }
-                        spriteRenderer.sprite = not_clean_tool_state;
-                        State = States.Tool;
-                        targetTag = TargetTag.Sink;
-                        transform.position = originalPosition;
                         break;
 
-                    case States.Bucket:
-                        if (gameObject.tag == "Bucket" && targetTag == TargetTag.Sink)
+                    case States.Base:
+                        if(hit.PH != 7)
                         {
-                            spriteRenderer.sprite = water_state;
-                            gameObject.tag = "Water_Bucket";
-                            transform.position = originalPosition;
+                            hit.PH += Random.RandomRange(1, 3);
+                            if (hit.PH >= 7)
+                            {
+                                hit.PH = 7;
+                                hit.tag = "Normal";
+                                hit.targetTag = TargetTag.Sink;
+                            }
+                            else if (hit.PH <= 0)
+                            {
+                                hit.PH = 0;
+                            }
                         }
-                        else if (gameObject.tag == "Mixed_Bucket" && targetTag == TargetTag.Trash_water)
+                        break;
+
+                    case States.Acid:
+                        if (hit.PH != 7)
                         {
-                            spriteRenderer.sprite = normal_state;
-                            gameObject.tag = "Bucket";
-                            targetTag = TargetTag.Sink;
-                            transform.position = originalPosition;
+                            hit.PH += Random.RandomRange(1, 3);
+                            if (hit.PH >= 7)
+                            {
+                                hit.PH = 7;
+                                hit.tag = "Normal";
+                                hit.targetTag = TargetTag.Sink;
+                            }
+                            else if (hit.PH <= 0)
+                            {
+                                hit.PH = 0;
+                            }
                         }
                         break;
 
@@ -210,7 +229,6 @@ public class DragAndDrop : MonoBehaviour
                             spriteRenderer.sprite = packed_state;
                             gameObject.tag = "Packed";
                             targetTag = TargetTag.Close_Box;
-                            transform.position = originalPosition;
                         }
                         else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid)
                         {
@@ -220,7 +238,6 @@ public class DragAndDrop : MonoBehaviour
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Pack_Box)
                         {
                             spriteRenderer.sprite = packed_state;
-                            transform.position = originalPosition;
                         }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight)
                         {
@@ -239,7 +256,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = danger_state;
                             targetTag = TargetTag.Trash_Danger;
-                            transform.position = originalPosition;
+
                         }
                         break;
 
@@ -248,7 +265,6 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spriteRenderer.sprite = cleaned_tool_state;
                             targetTag = TargetTag.Dry_Box;
-                            transform.position = originalPosition;
                         }
                         else
                         {
@@ -277,9 +293,9 @@ public class DragAndDrop : MonoBehaviour
         if (!found)
         {
             Check_Danger.instance.ReduceTime(10);
-            // หากไม่เจอ object ใดในวงนี้ กลับไปตำแหน่งเดิม
-            transform.position = originalPosition;
         }
+
+        transform.position = originalPosition;
     }
 
     private void OnDrawGizmosSelected()

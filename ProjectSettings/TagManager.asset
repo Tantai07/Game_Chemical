@@ -5,20 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - Normal
-  - Water
   - Sink
-  - Water_Bucket
-  - Bucket
-  - Trash_water
   - Trash_Danger
   - Close_Box
   - Dry_Box
-  - Mixed_Bucket
   - Pack_Box
   - Packed
   - Over_Weight
   - Trash_Over_Weight
   - Save_Box
+  - Not ready
+  - None
   layers:
   - Default
   - TransparentFX
