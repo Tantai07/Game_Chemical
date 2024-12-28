@@ -1,4 +1,5 @@
 ﻿using Unity.Burst.CompilerServices;
+using UnityEditor;
 using UnityEngine;
 
 public class DragAndDrop : MonoBehaviour
@@ -8,6 +9,9 @@ public class DragAndDrop : MonoBehaviour
     public int PH;
     public int Mass_grams;
     public States State;
+
+    [Header("Special")]
+    public bool special_case_Return_To_Original;
 
     [Header("State of object")]
     public Sprite normal_state;
@@ -51,7 +55,8 @@ public class DragAndDrop : MonoBehaviour
         Base,
         Danger,
         Tool,
-        Save
+        Save,
+        Special
     }
 
     public enum TargetTag
@@ -64,7 +69,8 @@ public class DragAndDrop : MonoBehaviour
         Close_Box,
         Dry_Box,
         Pack_Box,
-        Save_Box
+        Save_Box,
+        Original_place
     }
 
     private void Start()
@@ -100,11 +106,25 @@ public class DragAndDrop : MonoBehaviour
                     if (Name == name)
                     {
                         gameObject.tag = "Normal";
-                        State = States.Danger;
-                        targetTag = TargetTag.Pack_Box;
+                        if (special_case_Return_To_Original)
+                        {
+                            State = States.Special;
+                            targetTag = TargetTag.Original_place;
+                        }
+                        else
+                        {
+                            State = States.Danger;
+                            targetTag = TargetTag.Pack_Box;
+                        }
                         Liquid = true;
                         break;
                     }
+                }
+
+                if (special_case_Return_To_Original)
+                {
+                    State = States.Special;
+                    targetTag = TargetTag.Original_place;
                 }
                 break;
 
@@ -278,6 +298,17 @@ public class DragAndDrop : MonoBehaviour
                         {
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
+                        }
+                        break;
+
+                    case States.Special:
+                        string[] splitNames = hitCollider.gameObject.name.Split('_');
+                        if (targetTag == TargetTag.Original_place && special_case_Return_To_Original && splitNames[1] == Name)
+                        {
+                            gameObject.tag = "Normal";
+                            spriteRenderer.sprite = not_clean_tool_state;
+                            State = States.Tool;
+                            targetTag = TargetTag.Sink;
                         }
                         break;
 

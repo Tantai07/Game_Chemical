@@ -16,6 +16,7 @@ TagManager:
   - Save_Box
   - Not ready
   - None
+  - Original_place
   layers:
   - Default
   - TransparentFX
