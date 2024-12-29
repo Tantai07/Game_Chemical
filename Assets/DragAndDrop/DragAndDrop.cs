@@ -1,6 +1,7 @@
 ﻿using Unity.Burst.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class DragAndDrop : MonoBehaviour
 {
@@ -173,6 +174,9 @@ public class DragAndDrop : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (!Check_Danger.instance.canPlay)
+            return;
+
         // คำนวณ offset ระหว่างตำแหน่งของ GameObject กับตำแหน่งเมาส์
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         offset = transform.position - new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
@@ -180,12 +184,18 @@ public class DragAndDrop : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        if (!Check_Danger.instance.canPlay)
+            return;
+
         // อัปเดตตำแหน่ง GameObject ตามตำแหน่งของเมาส์
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector3(mousePosition.x + offset.x, mousePosition.y + offset.y, transform.position.z);
     }
     private void OnMouseUp()
     {
+        if (!Check_Danger.instance.canPlay)
+            return;
+
         Collider2D[] hitColliders = Physics2D.OverlapBoxAll(transform.position, detectionSize, 0f);
 
         bool found = false;  // ตัวแปรนี้ใช้เช็คว่าเจอ object แล้วหรือยัง
@@ -203,6 +213,7 @@ public class DragAndDrop : MonoBehaviour
                     case States.Liquid:
                         if (gameObject.tag == "Normal" && targetTag == TargetTag.Sink)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = not_clean_tool_state;
                             targetTag = TargetTag.Sink;
                             State = States.Tool;
@@ -218,6 +229,7 @@ public class DragAndDrop : MonoBehaviour
                                 hit.PH = 7;
                                 hit.tag = "Normal";
                                 hit.targetTag = TargetTag.Sink;
+                                Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             }
                             else if (hit.PH <= 0)
                             {
@@ -235,6 +247,7 @@ public class DragAndDrop : MonoBehaviour
                                 hit.PH = 7;
                                 hit.tag = "Normal";
                                 hit.targetTag = TargetTag.Sink;
+                                Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             }
                             else if (hit.PH <= 0)
                             {
@@ -246,21 +259,25 @@ public class DragAndDrop : MonoBehaviour
                     case States.Solid:
                         if (gameObject.tag == "Normal" && targetTag == TargetTag.Pack_Box)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = packed_state;
                             gameObject.tag = "Packed";
                             targetTag = TargetTag.Close_Box;
                         }
                         else if (gameObject.tag == "Packed" && targetTag == TargetTag.Close_Box && Normal_Solid)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Pack_Box)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = packed_state;
                         }
                         else if (gameObject.tag == "Over_Weight" && targetTag == TargetTag.Trash_Over_Weight && Over_Weight)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
@@ -269,11 +286,13 @@ public class DragAndDrop : MonoBehaviour
                     case States.Danger:
                         if (targetTag == TargetTag.Trash_Danger && (Tool_Danger || Danger))
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
                         else if (targetTag == TargetTag.Pack_Box)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = danger_state;
                             targetTag = TargetTag.Trash_Danger;
 
@@ -283,11 +302,13 @@ public class DragAndDrop : MonoBehaviour
                     case States.Tool:
                         if (gameObject.tag == "Normal" && targetTag == TargetTag.Sink)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = cleaned_tool_state;
                             targetTag = TargetTag.Dry_Box;
                         }
                         else
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
@@ -296,6 +317,7 @@ public class DragAndDrop : MonoBehaviour
                     case States.Save:
                         if (gameObject.tag == "Normal" && targetTag == TargetTag.Save_Box)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             Check_Danger.instance.Add_Score(1);
                             gameObject.SetActive(false);
                         }
@@ -305,6 +327,7 @@ public class DragAndDrop : MonoBehaviour
                         string[] splitNames = hitCollider.gameObject.name.Split('_');
                         if (targetTag == TargetTag.Original_place && special_case_Return_To_Original && splitNames[1] == Name)
                         {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             gameObject.tag = "Normal";
                             spriteRenderer.sprite = not_clean_tool_state;
                             State = States.Tool;

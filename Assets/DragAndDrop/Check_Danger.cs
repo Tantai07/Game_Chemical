@@ -15,6 +15,9 @@ public class Check_Danger : MonoBehaviour
     public int Max_score;
     [SerializeField] int Current_score;
 
+    [Header("Bool For Can Play")]
+    public bool canPlay;
+
     [Header("Animator of Block")]
     public Animator anim1;
     public Animator anim2;
@@ -30,6 +33,7 @@ public class Check_Danger : MonoBehaviour
 
     [Header("Timer Status")]
     public bool isRunning = false;
+    public bool isTimerStopped = false;
 
     [Header("Text Score")]
     public TextMeshProUGUI score_text;
@@ -67,7 +71,7 @@ public class Check_Danger : MonoBehaviour
 
     void Update()
     {
-        if (isRunning)
+        if (isRunning && !isTimerStopped)
         {
             UpdateTimer();
         }
@@ -83,19 +87,19 @@ public class Check_Danger : MonoBehaviour
 
     private void UpdateTimer()
     {
-        if (currentTime >= 0)
+        if (currentTime >= 0 && !isTimerStopped)  // Ensure timer only decreases if it's not stopped
         {
             currentTime -= Time.deltaTime;
 
             timerFillImage.fillAmount = currentTime / maxTime;
 
-            // แสดงเวลาในรูปแบบ นาที : วินาที
+            // Display time in minute:second format
             int minutes = Mathf.FloorToInt(currentTime / 60);
             int seconds = Mathf.FloorToInt(currentTime % 60);
             timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }
-        
-        if(timerFillImage.fillAmount == 0)
+
+        if (timerFillImage.fillAmount == 0)
         {
             currentTime = 0;
             timerFillImage.fillAmount = 0f;
@@ -105,6 +109,14 @@ public class Check_Danger : MonoBehaviour
 
             GameOver();
         }
+    }
+    public void TimeStop()
+    {
+        isTimerStopped = true;
+    }
+    public void TimeResume()
+    {
+        isTimerStopped = false;
     }
 
     private void GameOver()
@@ -146,6 +158,7 @@ public class Check_Danger : MonoBehaviour
         if (Current_score >= Max_score)
         {
             Current_score = 0;
+            TimeStop();
             Invoke("Start_Black", 3);
         }
     }

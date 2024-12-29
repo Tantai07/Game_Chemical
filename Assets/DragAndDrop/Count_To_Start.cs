@@ -16,8 +16,6 @@ public class Count_To_Start : MonoBehaviour
     }
     public IEnumerator CountdownCoroutine(float time)
     {
-        yield return new WaitForSeconds(time);
-        Check_Danger.instance.Finish_Black();
         for (int i = 3; i > 0; i--)
         {
             countdownText.text = i.ToString();
@@ -28,6 +26,7 @@ public class Count_To_Start : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         Check_Danger.instance.StartTimer();
+        Check_Danger.instance.canPlay = true;
         gameObject.SetActive(false);
     }
 }

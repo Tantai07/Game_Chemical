@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7159443521627209703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1457604591421048512}
+  - component: {fileID: 1024011758845329848}
+  m_Layer: 0
+  m_Name: Chemical_Control
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1457604591421048512
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7159443521627209703}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.51, y: -1.36, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1024011758845329848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7159443521627209703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1959fb94d7563341a74ac48d7e7739f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Danger_list:
+  - Na
+  - C2H6O
+  - H2SO4
+  - Cl
+  - C3H8
+  Max_score: 11
+  Current_score: 0
+  canPlay: 0
+  anim1: {fileID: 0}
+  anim2: {fileID: 0}
+  maxTime: 300
+  timerFillImage: {fileID: 0}
+  timerText: {fileID: 0}
+  elapsedTimeText: {fileID: 0}
+  isRunning: 0
+  isTimerStopped: 0
+  score_text: {fileID: 0}
+  text_gameOver: {fileID: 0}
+  image_in_button: {fileID: 0}
+  gameover_Button: {fileID: 0}

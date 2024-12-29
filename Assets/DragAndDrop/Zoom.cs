@@ -26,7 +26,9 @@ public class Zoom : MonoBehaviour
 
     private void Update()
     {
-        // เช็คการคลิกขวา
+        if (!Check_Danger.instance.canPlay)
+            return;
+
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);

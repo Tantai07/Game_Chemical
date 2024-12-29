@@ -18,8 +18,25 @@ public class Cut_Scene_Controller : MonoBehaviour
 
     [Header("Count To Start Script")]
     public Count_To_Start count;
+    public GameObject text_count;
 
     private int currentImageIndex = 0;
+
+    // Singleton Instance
+    public static Cut_Scene_Controller instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple instances of Cut_Scene_Controller detected. Destroying duplicate.");
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -94,6 +111,7 @@ public class Cut_Scene_Controller : MonoBehaviour
             ShowImage(currentImageIndex);
         }
     }
+
     public void CloseCutScene()
     {
         Check_Danger.instance.Start_Black();
@@ -103,9 +121,12 @@ public class Cut_Scene_Controller : MonoBehaviour
 
     private IEnumerator HideGameObject()
     {
+        yield return new WaitForSeconds(1f);
         count.gameObject.SetActive(true);
-        count.Start_Count();
-        yield return new WaitForSeconds(AnimationTime);
+        yield return new WaitForSeconds(2f);
         gameObject.SetActive(false);
+        Check_Danger.instance.Finish_Black();
+        yield return new WaitForSeconds(AnimationTime);
+
     }
 }
