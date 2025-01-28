@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/DragAndDrop/All_Scene/Start.unity
+    guid: 02ac1e05de0fc6d41b2fe7aa643ab173
+  - enabled: 1
     path: Assets/DragAndDrop/All_Scene/State 1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/DragAndDrop/All_Scene/State 2.unity
+    guid: 46332c6518e2e9f4ba26335957441956
+  - enabled: 1
+    path: Assets/DragAndDrop/All_Scene/State 3.unity
+    guid: c5a405f036f4df44db7520702231dece
+  - enabled: 1
+    path: Assets/DragAndDrop/All_Scene/State 4.unity
+    guid: 9227f6e3414efa5438db95aa40a13781
   m_configObjects: {}

@@ -13,6 +13,8 @@ public class DragAndDrop : MonoBehaviour
 
     [Header("Special")]
     public bool special_case_Return_To_Original;
+    public bool ignore_liquid_rule;
+    public bool go_trash_water;
 
     [Header("State of object")]
     public Sprite normal_state;
@@ -57,16 +59,21 @@ public class DragAndDrop : MonoBehaviour
         Danger,
         Tool,
         Save,
-        Special
+        Garbage,
+        Special,
+        Bucket,
+        Water_Bucket
     }
 
     public enum TargetTag
     {
         None,
         Sink,
-        Normal,
+        Not_ready,
         Trash_Over_Weight,
         Trash_Danger,
+        Trash_Normal,
+        Trash_Water,
         Close_Box,
         Dry_Box,
         Pack_Box,
@@ -86,6 +93,10 @@ public class DragAndDrop : MonoBehaviour
                 targetTag = TargetTag.Sink;
                 break;
 
+            case States.Bucket:
+                targetTag = TargetTag.Sink;
+                break;
+
             case States.Save:
                 spriteRenderer.sprite = normal_state;
                 targetTag = TargetTag.Save_Box;
@@ -99,7 +110,13 @@ public class DragAndDrop : MonoBehaviour
                 else if (PH > 8 || PH < 7)
                 {
                     targetTag = TargetTag.None;
-                    gameObject.tag = "Not ready";
+                    gameObject.tag = "Not_ready";
+                }
+
+                if (go_trash_water)
+                {
+                    State = States.Special;
+                    targetTag = TargetTag.Trash_Water;
                 }
 
                 foreach (var name in Check_Danger.instance.Danger_list)
@@ -130,13 +147,17 @@ public class DragAndDrop : MonoBehaviour
                 break;
 
             case States.Danger:
-                targetTag = TargetTag.Trash_Danger;
+                targetTag = TargetTag.Pack_Box;
                 Tool_Danger = true;
                 break;
 
             case States.Acid:
             case States.Base:
-                targetTag = TargetTag.Normal;
+                targetTag = TargetTag.Not_ready;
+                break;
+
+            case States.Garbage:
+                targetTag = TargetTag.Trash_Normal;
                 break;
 
 
@@ -221,17 +242,17 @@ public class DragAndDrop : MonoBehaviour
                         break;
 
                     case States.Base:
-                        if(hit.PH != 7)
+                        if(hit.PH != 7 && !hit.ignore_liquid_rule)
                         {
                             hit.PH += Random.RandomRange(1, 3);
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             if (hit.PH >= 7)
                             {
                                 hit.PH = 7;
                                 hit.tag = "Normal";
                                 hit.targetTag = TargetTag.Sink;
-                                Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             }
-                            else if (hit.PH <= 0)
+                            else if (hit.PH < 0)
                             {
                                 hit.PH = 0;
                             }
@@ -239,17 +260,17 @@ public class DragAndDrop : MonoBehaviour
                         break;
 
                     case States.Acid:
-                        if (hit.PH != 7)
+                        if (hit.PH != 7 && !hit.ignore_liquid_rule)
                         {
-                            hit.PH += Random.RandomRange(1, 3);
-                            if (hit.PH >= 7)
+                            hit.PH -= Random.RandomRange(1, 3);
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
+                            if (hit.PH <= 8)
                             {
                                 hit.PH = 7;
                                 hit.tag = "Normal";
                                 hit.targetTag = TargetTag.Sink;
-                                Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             }
-                            else if (hit.PH <= 0)
+                            else if (hit.PH < 0)
                             {
                                 hit.PH = 0;
                             }
@@ -294,8 +315,60 @@ public class DragAndDrop : MonoBehaviour
                         {
                             Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
                             spriteRenderer.sprite = danger_state;
+                            gameObject.transform.rotation = Quaternion.identity;
                             targetTag = TargetTag.Trash_Danger;
 
+                        }
+                        break;
+
+                    case States.Garbage:
+                        if(targetTag == TargetTag.Trash_Normal)
+                        {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
+                            Check_Danger.instance.Add_Score(1);
+                            gameObject.SetActive(false);
+                        }
+                        break;
+
+                    case States.Bucket:
+                        if (targetTag == TargetTag.Sink)
+                        {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
+                            State = States.Water_Bucket;
+                            targetTag = TargetTag.Not_ready;
+                            spriteRenderer.sprite = water_state;
+                        }
+                        break;
+
+                    case States.Water_Bucket:
+                        if (targetTag == TargetTag.Not_ready && hit.ignore_liquid_rule)
+                        {
+                            Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
+                            bool pass = false;
+
+                            if (hit.PH > 8)
+                            {
+                                hit.PH -= Random.RandomRange(1, 2);
+                                if (hit.PH <= 8)
+                                {
+                                    pass = true;
+                                }
+                            }
+                            else if (hit.PH < 7)
+                            {
+                                hit.PH += Random.RandomRange(1, 2);
+                                if (hit.PH > 7)
+                                {
+                                    pass = true;
+                                }
+                            }
+
+                            if (pass)
+                            {
+                                hit.PH = 7;
+                                hit.tag = "Normal";
+                                hit.targetTag = TargetTag.Sink;
+                            }
                         }
                         break;
 
@@ -324,14 +397,25 @@ public class DragAndDrop : MonoBehaviour
                         break;
 
                     case States.Special:
-                        string[] splitNames = hitCollider.gameObject.name.Split('_');
-                        if (targetTag == TargetTag.Original_place && special_case_Return_To_Original && splitNames[1] == Name)
+                        if (special_case_Return_To_Original)
+                        {
+                            string[] splitNames = hitCollider.gameObject.name.Split('_');
+                            if (targetTag == TargetTag.Original_place && splitNames[1] == Name)
+                            {
+                                Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
+                                gameObject.tag = "Normal";
+                                spriteRenderer.sprite = not_clean_tool_state;
+                                State = States.Tool;
+                                targetTag = TargetTag.Sink;
+                            }
+                        }
+                        else if (go_trash_water)
                         {
                             Effect_Manager.Instance.GetFromPool("Check_Mark", transform.position, Quaternion.identity);
-                            gameObject.tag = "Normal";
                             spriteRenderer.sprite = not_clean_tool_state;
-                            State = States.Tool;
+                            gameObject.tag = "Normal";
                             targetTag = TargetTag.Sink;
+                            State = States.Tool;
                         }
                         break;
 
@@ -344,7 +428,7 @@ public class DragAndDrop : MonoBehaviour
             }
         }
 
-        if (!found)
+        if (!found && (State != States.Acid || State != States.Base))
         {
             Check_Danger.instance.ReduceTime(10);
         }

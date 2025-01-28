@@ -20,6 +20,9 @@ public class Cut_Scene_Controller : MonoBehaviour
     public Count_To_Start count;
     public GameObject text_count;
 
+    [Header("Limit for 1 page")]
+    public int limit;
+
     private int currentImageIndex = 0;
 
     // Singleton Instance
@@ -40,6 +43,7 @@ public class Cut_Scene_Controller : MonoBehaviour
 
     private void Start()
     {
+        limit++;
         Check_Danger.instance.Finish_Black();
         for (int i = 0; i < images.Count; i++)
         {
@@ -62,10 +66,10 @@ public class Cut_Scene_Controller : MonoBehaviour
     private void ShowNextImage()
     {
         currentImageIndex++;
-        if (currentImageIndex > 0 && currentImageIndex % 3 == 0)
+        if (currentImageIndex > 0 && currentImageIndex % limit == 0)
         {
             // เรียก Coroutine เพื่อรอจนกว่า FadeOut จะเสร็จ
-            StartCoroutine(HidePreviousImagesAndShowNext(currentImageIndex - 3));
+            StartCoroutine(HidePreviousImagesAndShowNext(currentImageIndex - limit));
         }
         else if (currentImageIndex < images.Count)
         {
@@ -90,7 +94,7 @@ public class Cut_Scene_Controller : MonoBehaviour
 
     private IEnumerator HidePreviousImagesAndShowNext(int startIndex)
     {
-        for (int i = startIndex; i < startIndex + 3 && i < images.Count; i++)
+        for (int i = startIndex; i < startIndex + limit && i < images.Count; i++)
         {
             Animator animator = images[i].GetComponent<Animator>();
             if (animator != null)
@@ -101,7 +105,7 @@ public class Cut_Scene_Controller : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        for (int i = startIndex; i < startIndex + 3 && i < images.Count; i++)
+        for (int i = startIndex; i < startIndex + limit && i < images.Count; i++)
         {
             images[i].gameObject.SetActive(false);
         }

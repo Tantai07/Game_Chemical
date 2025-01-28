@@ -6,6 +6,6 @@ public class text_gameOver : MonoBehaviour
 {
     public void Show()
     {
-        Check_Danger.instance.ShowButton();
+        Check_Danger.instance.ShowButton_gameOver();
     }
 }

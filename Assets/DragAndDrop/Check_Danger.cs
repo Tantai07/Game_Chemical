@@ -38,10 +38,18 @@ public class Check_Danger : MonoBehaviour
     [Header("Text Score")]
     public TextMeshProUGUI score_text;
 
-    [Header("Game Over UI")]
+    [Header("Game Over & Next Scene UI")]
     public TextMeshProUGUI text_gameOver;
-    public Image image_in_button;
+    public Image image_in_button_gameOver;
     public GameObject gameover_Button;
+
+    [Space(10)]
+    public TextMeshProUGUI text_nextScene;
+    public Image image_in_button_nextScene;
+    public GameObject nextScene_Button;
+
+    [Header("Start Scene")]
+    public bool start_scene;
 
     public static Check_Danger instance;
 
@@ -60,6 +68,9 @@ public class Check_Danger : MonoBehaviour
 
     void Start()
     {
+        if (start_scene)
+            return;
+
         anim = elapsedTimeText.GetComponent<Animator>();
         UpdateScore();
     }
@@ -107,6 +118,7 @@ public class Check_Danger : MonoBehaviour
 
             timerText.text = "00:00";
 
+            canPlay = false;
             GameOver();
         }
     }
@@ -126,10 +138,24 @@ public class Check_Danger : MonoBehaviour
         Start_Black();
         gameover_Button.SetActive(true);
     }
-    public void ShowButton()
+    private void NextScene()
+    {
+        Animator anim_next = text_nextScene.GetComponent<Animator>();
+        anim_next.Play("GameOver");
+        Start_Black();
+        nextScene_Button.SetActive(true);
+    }
+    public void ShowButton_nextScene()
+    {
+        Animator anim_button = nextScene_Button.GetComponent<Animator>();
+        Animator anim_image = image_in_button_nextScene.GetComponent<Animator>();
+        anim_button.Play("Return_Show_Up");
+        anim_image.Play("Return_Show_Up");
+    }
+    public void ShowButton_gameOver()
     {
         Animator anim_button = gameover_Button.GetComponent<Animator>();
-        Animator anim_image = image_in_button.GetComponent<Animator>();
+        Animator anim_image = image_in_button_gameOver.GetComponent<Animator>();
         anim_button.Play("Return_Show_Up");
         anim_image.Play("Return_Show_Up");
     }
@@ -159,7 +185,8 @@ public class Check_Danger : MonoBehaviour
         {
             Current_score = 0;
             TimeStop();
-            Invoke("Start_Black", 3);
+            canPlay = false;
+            Invoke("NextScene", 3);
         }
     }
 

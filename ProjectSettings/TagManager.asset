@@ -14,9 +14,11 @@ TagManager:
   - Over_Weight
   - Trash_Over_Weight
   - Save_Box
-  - Not ready
   - None
   - Original_place
+  - Trash_Normal
+  - Trash_Water
+  - Not_ready
   layers:
   - Default
   - TransparentFX
